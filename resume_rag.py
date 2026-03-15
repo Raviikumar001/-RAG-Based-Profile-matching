@@ -44,7 +44,7 @@ SECTION_HEADINGS = [
     "contact", "personal information",
 ]
 
-# Build a regex that matches section headings (case-insensitive, at line start)
+
 _heading_pattern = "|".join(re.escape(h) for h in SECTION_HEADINGS)
 SECTION_RE = re.compile(
     rf"^[\s]*(?P<heading>{_heading_pattern})[\s]*[:\-–—]?\s*$",
@@ -52,9 +52,7 @@ SECTION_RE = re.compile(
 )
 
 
-# ---------------------------------------------------------------------------
-# Token utilities
-# ---------------------------------------------------------------------------
+
 _enc = tiktoken.get_encoding("cl100k_base")
 
 
@@ -120,9 +118,7 @@ class PDFLoader:
         return results
 
 
-# ---------------------------------------------------------------------------
-# Resume Chunker  (section-aware)
-# ---------------------------------------------------------------------------
+------------------------------------------------------------------------
 class ResumeChunker:
     """
     Splits resume text into chunks, preserving section boundaries.
@@ -161,7 +157,7 @@ class ResumeChunker:
             return [("full_resume", text)]
 
         sections = []
-        # Text before first heading
+
         if matches[0].start() > 0:
             preamble = text[: matches[0].start()].strip()
             if preamble:
@@ -169,7 +165,7 @@ class ResumeChunker:
 
         for i, match in enumerate(matches):
             heading = match.group("heading").strip().lower()
-            # Normalize heading
+
             heading = ResumeChunker._normalize_heading(heading)
             start = match.end()
             end = matches[i + 1].start() if i + 1 < len(matches) else len(text)
@@ -207,9 +203,7 @@ class ResumeChunker:
         return mapping.get(heading, heading)
 
 
-# ---------------------------------------------------------------------------
-# Metadata Extractor
-# ---------------------------------------------------------------------------
+
 class MetadataExtractor:
     """Extract structured metadata from raw resume text."""
 
@@ -228,11 +222,11 @@ class MetadataExtractor:
         lines = text.strip().split("\n")
         for line in lines[:5]:
             line = line.strip()
-            # Skip lines that look like contact info / emails / phones
+
             if re.search(r"[@\d{5,}]", line):
                 continue
             if line and len(line) < 60 and not line.startswith(("http", "www")):
-                # Remove common prefixes
+
                 cleaned = re.sub(r"^(name\s*[:–-]\s*)", "", line, flags=re.IGNORECASE)
                 return cleaned.strip()
         return "Unknown"
@@ -240,7 +234,7 @@ class MetadataExtractor:
     @staticmethod
     def _extract_skills(text: str) -> str:
         """Extract skills from a Skills/Technical Skills section."""
-        # Try to find a skills section
+
         skills_match = re.search(
             r"(?:skills|technical skills|core competencies|technologies)\s*[:\-–—]?\s*\n(.*?)(?=\n\s*(?:"
             + _heading_pattern
@@ -250,7 +244,7 @@ class MetadataExtractor:
         )
         if skills_match:
             skills_text = skills_match.group(1).strip()
-            # Clean up: flatten to comma-separated
+
             skills_text = re.sub(r"[\n•·▪►●■\-]+", ", ", skills_text)
             skills_text = re.sub(r"\s*,\s*,\s*", ", ", skills_text)
             skills_text = re.sub(r"\s+", " ", skills_text).strip(", ")
@@ -260,14 +254,14 @@ class MetadataExtractor:
     @staticmethod
     def _extract_experience_years(text: str) -> int:
         """Estimate years of experience from date ranges like 2018-2023."""
-        # Pattern: year-year or year–year or year to year
+
         year_ranges = re.findall(
             r"(20\d{2}|19\d{2})\s*[-–—to]+\s*(20\d{2}|19\d{2}|present|current|now)",
             text,
             re.IGNORECASE,
         )
         if not year_ranges:
-            # Try "X years of experience" pattern
+
             explicit = re.search(r"(\d+)\+?\s*(?:years?|yrs?)\s*(?:of)?\s*experience", text, re.IGNORECASE)
             if explicit:
                 return int(explicit.group(1))
@@ -282,7 +276,7 @@ class MetadataExtractor:
             else:
                 end = int(end_str)
             total += max(0, end - start)
-        return min(total, 40)  # Cap at 40
+        return min(total, 40)  
 
     @staticmethod
     def _extract_education(text: str) -> str:
@@ -296,15 +290,12 @@ class MetadataExtractor:
         )
         if edu_match:
             edu_text = edu_match.group(1).strip()
-            # Take first few lines
+
             lines = [l.strip() for l in edu_text.split("\n") if l.strip()][:4]
             return " | ".join(lines)[:300]
         return ""
 
 
-# ---------------------------------------------------------------------------
-# Embedding Generator  (Gemini)
-# ---------------------------------------------------------------------------
 class EmbeddingGenerator:
     """Generate embeddings using Google Gemini gemini-embedding-2-preview."""
 
@@ -313,7 +304,7 @@ class EmbeddingGenerator:
         if api_key:
             self.client = genai.Client(api_key=api_key)
         else:
-            # Uses GEMINI_API_KEY or GOOGLE_API_KEY env var
+
             self.client = genai.Client()
 
     def embed_documents(self, texts: list[str], batch_size: int = 20) -> list[list[float]]:
@@ -328,7 +319,7 @@ class EmbeddingGenerator:
             )
             all_embeddings.extend([e.values for e in result.embeddings])
             if i + batch_size < len(texts):
-                time.sleep(0.5)  # Rate-limit courtesy
+                time.sleep(0.5)  
         return all_embeddings
 
     def embed_query(self, query: str) -> list[float]:

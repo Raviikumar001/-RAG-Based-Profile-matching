@@ -124,17 +124,17 @@ class JDProcessor:
     def extract_keywords(jd: dict) -> list[str]:
         """Extract critical skill keywords from a JD."""
         text = JDProcessor.jd_to_text(jd)
-        # Common technical terms and tools to look for
+
         keywords = set()
-        # Extract from responsibilities
+
         for resp in jd.get("responsibilities", []):
-            # Look for tool/technology names (capitalized words, abbreviations)
+
             tools = re.findall(r"\b[A-Z][A-Za-z+#]*(?:\.[A-Za-z]+)*\b", resp["description"])
             keywords.update(tools)
-            # Look for abbreviations
+
             abbrevs = re.findall(r"\b[A-Z]{2,}\b", resp["description"])
             keywords.update(abbrevs)
-        # Remove common non-skill words
+
         noise = {"The", "Act", "Own", "Work", "Lead", "Use", "AND", "For"}
         keywords -= noise
         return list(keywords)
@@ -162,9 +162,9 @@ class HybridSearcher:
         Uses ChromaDB's where_document filter.
         """
         all_results = []
-        for keyword in keywords[:10]:  # Limit to top 10 keywords
+        for keyword in keywords[:10]:  
             try:
-                # We need an embedding for the query - use the keyword itself
+
                 query_embedding = self.pipeline.embedder.embed_query(keyword)
                 results = self.pipeline.vector_store.query(
                     query_embedding=query_embedding,
@@ -204,11 +204,11 @@ class HybridSearcher:
         semantic_results = self.semantic_search(query, top_k=20, min_exp=min_exp)
         keyword_results = self.keyword_search(keywords, top_k=20) if keywords else []
 
-        # Build RRF scores per candidate
-        candidate_scores: dict[str, dict] = {}
-        k = 60  # RRF constant
 
-        # Semantic ranking
+        candidate_scores: dict[str, dict] = {}
+        k = 60  
+
+
         for rank, result in enumerate(semantic_results):
             name = result["candidate_name"]
             rrf_score = 1.0 / (k + rank + 1)
@@ -225,7 +225,7 @@ class HybridSearcher:
             candidate_scores[name]["rrf_score"] += rrf_score
             candidate_scores[name]["relevant_excerpts"].append(result["text"][:200])
 
-        # Keyword ranking
+
         seen_keyword_candidates = {}
         for result in keyword_results:
             name = result["candidate_name"]
@@ -250,7 +250,7 @@ class HybridSearcher:
             if keyword_results:
                 candidate_scores[name]["relevant_excerpts"].append(result["text"][:200])
 
-        # Sort by RRF score and return top-K
+
         ranked = sorted(candidate_scores.items(), key=lambda x: x[1]["rrf_score"], reverse=True)
         return [
             {
@@ -282,10 +282,10 @@ class CandidateScorer:
 
     @staticmethod
     def score(candidate: dict, jd: dict, jd_keywords: list[str]) -> int:
-        # Semantic similarity (already 0-1 from cosine)
+
         semantic = candidate.get("semantic_similarity", 0)
 
-        # Skill overlap
+
         candidate_skills = set(
             s.strip().lower()
             for s in candidate.get("skills", "").split(",")
@@ -297,7 +297,7 @@ class CandidateScorer:
         else:
             skill_overlap = 0
 
-        # Experience fit
+
         required_exp = CandidateScorer._parse_exp_range(jd.get("experience_years", "0"))
         candidate_exp = candidate.get("experience_years", 0)
         if required_exp > 0:
@@ -308,11 +308,11 @@ class CandidateScorer:
             else:
                 exp_score = max(0, candidate_exp / required_exp)
         else:
-            exp_score = 0.5  # No requirement specified
+            exp_score = 0.5 
 
-        # Education relevance (simple heuristic)
+
         edu = candidate.get("education", "").lower()
-        edu_score = 0.5  # Default
+        edu_score = 0.5
         if any(term in edu for term in ["master", "ms ", "m.s.", "mtech", "m.tech"]):
             edu_score = 0.8
         if any(term in edu for term in ["phd", "ph.d", "doctorate"]):
@@ -320,7 +320,7 @@ class CandidateScorer:
         if any(term in edu for term in ["bachelor", "bs ", "b.s.", "btech", "b.tech", "b.e."]):
             edu_score = 0.6
 
-        # Weighted combination
+
         score = (
             0.40 * semantic
             + 0.30 * skill_overlap
@@ -334,24 +334,22 @@ class CandidateScorer:
     def _parse_exp_range(exp_str: str) -> int:
         """Parse experience strings like '3–4', '10+', '9+'."""
         exp_str = str(exp_str)
-        # "10+" → 10
+
         match = re.search(r"(\d+)\+", exp_str)
         if match:
             return int(match.group(1))
-        # "3-4" or "3–4" → 3 (minimum)
+
         match = re.search(r"(\d+)\s*[-–—]\s*(\d+)", exp_str)
         if match:
             return int(match.group(1))
-        # Plain number
+
         match = re.search(r"(\d+)", exp_str)
         if match:
             return int(match.group(1))
         return 0
 
 
-# ---------------------------------------------------------------------------
-# Match Explainer
-# ---------------------------------------------------------------------------
+
 class MatchExplainer:
     """Generate human-readable match reasoning."""
 
@@ -359,7 +357,7 @@ class MatchExplainer:
     def explain(candidate: dict, jd: dict, match_score: int, jd_keywords: list[str]) -> str:
         parts = []
 
-        # Score summary
+
         if match_score >= 80:
             parts.append(f"Strong match (score: {match_score}/100).")
         elif match_score >= 60:
@@ -369,7 +367,7 @@ class MatchExplainer:
         else:
             parts.append(f"Weak match (score: {match_score}/100).")
 
-        # Skills
+
         candidate_skills = set(
             s.strip().lower()
             for s in candidate.get("skills", "").split(",")
@@ -384,7 +382,7 @@ class MatchExplainer:
         if missing:
             parts.append(f"Missing skills: {', '.join(sorted(missing))}.")
 
-        # Experience
+
         exp = candidate.get("experience_years", 0)
         required = CandidateScorer._parse_exp_range(jd.get("experience_years", "0"))
         if exp >= required:
@@ -392,7 +390,7 @@ class MatchExplainer:
         elif exp > 0:
             parts.append(f"Experience ({exp} yrs) is below the {required}+ year requirement.")
 
-        # Education
+
         edu = candidate.get("education", "")
         if edu:
             parts.append(f"Education: {edu[:100]}.")
@@ -400,9 +398,7 @@ class MatchExplainer:
         return " ".join(parts)
 
 
-# ---------------------------------------------------------------------------
-# Job Matcher  (main class with tool calling)
-# ---------------------------------------------------------------------------
+
 class JobMatcher:
     """
     Main matching engine. Uses Gemini tool calling to intelligently
@@ -436,21 +432,21 @@ class JobMatcher:
         print(f"Min experience: {min_exp} years")
         print(f"{'━' * 60}")
 
-        # Hybrid search
+
         candidates = self.searcher.hybrid_search(
             query=jd_text,
             keywords=jd_keywords,
             top_k=top_k,
-            min_exp=None,  # Don't hard-filter, let scoring handle it
+            min_exp=None,  
         )
 
-        # Score, explain, and format
+
         top_matches = []
         for candidate in candidates:
             score = self.scorer.score(candidate, jd, jd_keywords)
             reasoning = self.explainer.explain(candidate, jd, score, jd_keywords)
 
-            # Determine matched skills
+
             candidate_skill_set = set(
                 s.strip() for s in candidate.get("skills", "").split(",") if s.strip()
             )
@@ -468,7 +464,7 @@ class JobMatcher:
                 "reasoning": reasoning,
             })
 
-        # Sort by match_score descending
+
         top_matches.sort(key=lambda x: x["match_score"], reverse=True)
 
         return {
@@ -487,7 +483,7 @@ class JobMatcher:
         print(f"[Tool Calling] Matching: {jd['title']} ({jd['level']})")
         print(f"{'━' * 60}")
 
-        # System prompt for the tool-calling agent
+
         system_prompt = """You are a recruitment AI assistant. Given a job description, 
         use the available tools to search a resume database and find the best matching candidates.
         
@@ -499,7 +495,7 @@ class JobMatcher:
         
         Be thorough but efficient. Focus on finding truly relevant candidates."""
 
-        # Start the conversation
+
         user_message = f"""Find the top {top_k} candidates matching this job description:
 
 {jd_text}
@@ -517,7 +513,7 @@ ranking with scores (0-100) and reasoning for each candidate."""
             ),
         )
 
-        # Process tool calls in a loop
+
         all_search_results = []
         max_iterations = 8
         iteration = 0
@@ -525,7 +521,7 @@ ranking with scores (0-100) and reasoning for each candidate."""
         while iteration < max_iterations:
             iteration += 1
 
-            # Check if there are function calls
+
             has_function_calls = False
             if response.candidates and response.candidates[0].content:
                 for part in response.candidates[0].content.parts:
@@ -536,7 +532,7 @@ ranking with scores (0-100) and reasoning for each candidate."""
             if not has_function_calls:
                 break
 
-            # Process each function call
+
             function_responses = []
             for part in response.candidates[0].content.parts:
                 if not part.function_call:
@@ -557,7 +553,7 @@ ranking with scores (0-100) and reasoning for each candidate."""
                     )
                 )
 
-            # Continue the conversation with tool results
+
             response = self.genai_client.models.generate_content(
                 model=GEMINI_CHAT_MODEL,
                 contents=[
@@ -572,7 +568,7 @@ ranking with scores (0-100) and reasoning for each candidate."""
                 ),
             )
 
-        # Extract the final text response from Gemini
+
         final_text = ""
         if response.candidates and response.candidates[0].content:
             for part in response.candidates[0].content.parts:
@@ -581,11 +577,11 @@ ranking with scores (0-100) and reasoning for each candidate."""
 
         print(f"\n  📝 Gemini analysis complete ({iteration} iterations)")
 
-        # Also do our own structured matching as fallback/supplement
+
         jd_keywords = self.jd_processor.extract_keywords(jd)
         structured_result = self.match_jd(jd, top_k=top_k)
 
-        # Augment with Gemini's analysis
+
         structured_result["gemini_analysis"] = final_text
 
         return structured_result
@@ -599,7 +595,7 @@ ranking with scores (0-100) and reasoning for each candidate."""
             if min_exp is not None:
                 min_exp = int(min_exp)
             results = self.pipeline.search(query, top_k=top_k, min_experience=min_exp)
-            # Simplify for the LLM
+
             return [
                 {
                     "candidate_name": r["candidate_name"],
@@ -630,7 +626,7 @@ ranking with scores (0-100) and reasoning for each candidate."""
 
         elif fn_name == "get_candidate_details":
             name = fn_args.get("candidate_name", "")
-            # Search for this specific candidate
+
             try:
                 results = self.pipeline.vector_store.query(
                     query_embedding=self.pipeline.embedder.embed_query(name),
@@ -714,7 +710,7 @@ if __name__ == "__main__":
             use_tools=args.use_tools,
         )
 
-    # Print results
+
     for result in results:
         print(f"\n{'═' * 70}")
         print(f"JOB: {result['job_description'][:80]}...")
@@ -727,7 +723,6 @@ if __name__ == "__main__":
         if "gemini_analysis" in result:
             print(f"\n  🤖 Gemini Analysis:\n{result['gemini_analysis'][:500]}")
 
-    # Save to file
     output_path = args.output or os.path.join(
         os.path.dirname(__file__), "match_results.json"
     )
