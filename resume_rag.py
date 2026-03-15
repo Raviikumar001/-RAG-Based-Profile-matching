@@ -118,7 +118,6 @@ class PDFLoader:
         return results
 
 
-------------------------------------------------------------------------
 class ResumeChunker:
     """
     Splits resume text into chunks, preserving section boundaries.
