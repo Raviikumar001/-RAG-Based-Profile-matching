@@ -1,0 +1,236 @@
+[
+    {
+        "id": 1,
+        "title": "Mechanical Engineer",
+        "level": "Mid-Level",
+        "experience_years": "3–4",
+        "industries": [
+            "Hardware Tech",
+            "Robotics",
+            "Automotive Startups"
+        ],
+        "responsibilities": [
+            {
+                "name": "Product Design & Iteration",
+                "description": "Own the design of complex mechanical sub-assemblies from concept to production, using CAD software (SolidWorks/NX) to create detailed 3D models and 2D drawings."
+            },
+            {
+                "name": "DFM/DFA Optimization",
+                "description": "Apply Design for Manufacturing and Assembly principles to reduce part count and cost, working closely with vendors on injection molding, casting, and machining limitations."
+            },
+            {
+                "name": "Prototyping & Validation",
+                "description": "Build and test functional prototypes using 3D printing or CNC machining; design and execute test plans (drop tests, thermal cycling) to validate hardware reliability."
+            },
+            {
+                "name": "Tolerance Analysis",
+                "description": "Perform detailed tolerance stack-up analysis to ensure fit and function across mass-produced components."
+            },
+            {
+                "name": "Cross-functional Collaboration",
+                "description": "Work with Electrical and Firmware teams to ensure seamless integration of PCBAs and sensors into mechanical enclosures."
+            }
+        ]
+    },
+    {
+        "id": 2,
+        "title": "Staff/Principal Product Engineer",
+        "level": "Executive Individual Contributor",
+        "experience_years": "10+",
+        "industries": [
+            "Consumer Electronics",
+            "Global Product Companies"
+        ],
+        "notable_employers": [
+            "Apple",
+            "Dyson"
+        ],
+        "responsibilities": [
+            {
+                "name": "Global NPI Strategy",
+                "description": "Lead the New Product Introduction (NPI) strategy for a major product line, managing the transition from Engineering Validation to Mass Production at global scale."
+            },
+            {
+                "name": "Supply Chain Engineering",
+                "description": "Identify and qualify tier-1 global suppliers; lead technical negotiations and audit manufacturing facilities to ensure quality and scalability."
+            },
+            {
+                "name": "Root Cause Leadership",
+                "description": "Act as the final technical authority on high-priority field failures or production line stoppers, leading Tiger Teams to solve complex multi-disciplinary issues."
+            },
+            {
+                "name": "Risk Mitigation",
+                "description": "Conduct high-level FMEA (Failure Mode and Effects Analysis) to identify and mitigate technical and schedule risks long before they impact the bottom line."
+            },
+            {
+                "name": "Architecture Review",
+                "description": "Review and approve mechanical and system architectures for future product generations, ensuring they meet long-term sustainability and cost targets."
+            }
+        ]
+    },
+    {
+        "id": 3,
+        "title": "Senior UI Designer",
+        "level": "Senior",
+        "experience_years": "4–8",
+        "industries": [
+            "Product-Led Tech Companies"
+        ],
+        "notable_employers": [
+            "Figma",
+            "Canva",
+            "Airbnb"
+        ],
+        "responsibilities": [
+            {
+                "name": "Design System Governance",
+                "description": "Lead the evolution of the global design system, ensuring components are accessible, documented, and reusable across web and mobile platforms."
+            },
+            {
+                "name": "High-Fidelity Prototyping",
+                "description": "Create complex, interactive prototypes that simulate real product logic to validate ideas before engineering begins."
+            },
+            {
+                "name": "Cross-Functional Strategy",
+                "description": "Partner with Product Managers and Engineers to define the product roadmap, advocating for the user while respecting technical constraints."
+            },
+            {
+                "name": "User Research Integration",
+                "description": "Translate qualitative user feedback and quantitative data (A/B test results) into polished, high-performing interface solutions."
+            },
+            {
+                "name": "Design Mentorship",
+                "description": "Conduct design reviews and mentor junior designers to maintain a high bar for visual and interaction quality across the team."
+            }
+        ]
+    },
+    {
+        "id": 4,
+        "title": "Senior Principal Ocean Engineer",
+        "level": "Senior Principal",
+        "experience_years": "9+",
+        "industries": [
+            "Offshore Wind",
+            "Deepwater Energy",
+            "Marine Robotics"
+        ],
+        "responsibilities": [
+            {
+                "name": "Structural & Hydrodynamic Analysis",
+                "description": "Lead complex simulations (using OrcaFlex or ANSYS) for wave-structure interaction, mooring stability, and riser fatigue."
+            },
+            {
+                "name": "Offshore Installation Leadership",
+                "description": "Act as the primary technical authority on-site during high-stakes deployments, managing vessel operations and subsea hardware installation."
+            },
+            {
+                "name": "Regulatory & Safety Compliance",
+                "description": "Ensure all designs meet international maritime standards (ABS, DNV, API) and manage environmental impact assessments for offshore projects."
+            },
+            {
+                "name": "Budget & Vendor Management",
+                "description": "Oversee multi-million dollar CAPEX budgets and coordinate with global shipyards and fabrication partners."
+            },
+            {
+                "name": "Technological Innovation",
+                "description": "Spearhead R&D initiatives for autonomous underwater vehicles (AUVs) or floating renewable energy platforms."
+            }
+        ]
+    },
+    {
+        "id": 5,
+        "title": "Staff Data Engineer",
+        "level": "Staff",
+        "experience_years": "10+",
+        "industries": [
+            "High-Growth Tech Companies"
+        ],
+        "responsibilities": [
+            {
+                "name": "Architecture Design",
+                "description": "Define the long-term data strategy, moving from monolithic warehouses to modern architectures like Data Mesh or Data Fabric."
+            },
+            {
+                "name": "Infrastructure as Code (IaC)",
+                "description": "Lead the deployment of scalable data infrastructure using Terraform, Kubernetes, and cloud-native services (AWS, Snowflake, Databricks)."
+            },
+            {
+                "name": "Data Governance & Security",
+                "description": "Establish enterprise-wide standards for data privacy (GDPR/CCPA), lineage, and metadata management."
+            },
+            {
+                "name": "Performance Optimization",
+                "description": "Identify and resolve systemic bottlenecks in petabyte-scale pipelines, significantly reducing cloud compute costs (FinOps)."
+            },
+            {
+                "name": "Technical Roadmap",
+                "description": "Work with executive leadership to align data engineering efforts with core business KPIs and long-term scaling goals."
+            }
+        ]
+    },
+    {
+        "id": 6,
+        "title": "Senior Marketing Manager",
+        "level": "Senior",
+        "experience_years": "6+",
+        "industries": [
+            "SaaS",
+            "E-commerce",
+            "B2B Tech"
+        ],
+        "responsibilities": [
+            {
+                "name": "Full-Funnel Strategy",
+                "description": "Develop and execute integrated marketing campaigns across SEO, SEM, Paid Social, and Email to drive lead generation and revenue."
+            },
+            {
+                "name": "Brand Positioning",
+                "description": "Define the brand voice and market positioning to differentiate the product in a crowded competitive landscape."
+            },
+            {
+                "name": "Performance Analytics",
+                "description": "Own the marketing dashboard; use data to track ROAS, CAC, and LTV, making real-time pivots based on performance."
+            },
+            {
+                "name": "Content & Creative Direction",
+                "description": "Oversee the creation of high-performing assets, from whitepapers and case studies to video ads and landing pages."
+            },
+            {
+                "name": "Growth Experimentation",
+                "description": "Lead a culture of A/B testing across all channels to optimize conversion rates and user journeys."
+            }
+        ]
+    },
+    {
+        "id": 7,
+        "title": "Director of Learning & Development",
+        "level": "Director",
+        "experience_years": "9+",
+        "industries": [
+            "Corporate L&D",
+            "Large Educational Institutions"
+        ],
+        "responsibilities": [
+            {
+                "name": "Organizational Strategy",
+                "description": "Align the company's learning programs with business growth goals, ensuring the workforce has the skills needed for future scaling."
+            },
+            {
+                "name": "EdTech Ecosystem Management",
+                "description": "Select, implement, and manage the enterprise Learning Management System (LMS) and other educational tools."
+            },
+            {
+                "name": "Curriculum Architecture",
+                "description": "Oversee the design of scalable training programs, ranging from executive leadership coaching to technical onboarding."
+            },
+            {
+                "name": "Measurement of ROI",
+                "description": "Develop frameworks (like the Kirkpatrick Model) to measure the effectiveness of training and its impact on employee retention and productivity."
+            },
+            {
+                "name": "Stakeholder Management",
+                "description": "Act as a strategic partner to C-suite executives to address skill gaps and drive organizational change management."
+            }
+        ]
+    }
+]
